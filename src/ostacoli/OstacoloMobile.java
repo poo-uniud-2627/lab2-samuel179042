@@ -18,6 +18,9 @@ public class OstacoloMobile implements Ostacolo {
 
     private Rettangolo area;   // non è final: l'ostacolo si muove
     // scrivete qui gli altri campi che vi servono
+    private double velocita;
+    private double limiteAlto;
+    private double limiteBasso;
 
     /**
      * Pretende: area non è null; velocita è maggiore di 0; l'area sta fra i due limiti
@@ -25,8 +28,14 @@ public class OstacoloMobile implements Ostacolo {
      * Promette: un ostacolo che sta in area e che, al primo avanza, comincia a scendere.
      */
     public OstacoloMobile(Rettangolo area, double velocita, double limiteAlto, double limiteBasso) {
+        if(area == null || velocita <= 0 ||limiteAlto > area.y() || area.y() + area.altezza() > limiteBasso ){
+            throw new IllegalArgumentException();
+        }
         this.area = area;
-        // scrivete qui
+        this.velocita = velocita;
+        this.limiteAlto = limiteAlto;
+        this.limiteBasso = limiteBasso;
+        
     }
 
     @Override
@@ -46,7 +55,7 @@ public class OstacoloMobile implements Ostacolo {
     /** Promette: COLORE. */
     @Override
     public Color getColore() {
-        return null; // scrivete qui
+        return COLORE; // scrivete qui
     }
 
     /**
@@ -59,5 +68,17 @@ public class OstacoloMobile implements Ostacolo {
     @Override
     public void avanza() {
         // scrivete qui
+        double y = area.y() + velocita;
+
+        //scende -> limiteBasso 
+        if(velocita > 0 && y + area.altezza() >= limiteBasso){
+            y = limiteBasso - area.altezza();
+            velocita = -velocita;
+        }else if(velocita < 0 && y <= limiteAlto){ //sale -> limiteAlto
+            y = limiteAlto;
+            velocita = -velocita;
+        }
+
+        this.area = new Rettangolo(area.x(),y,area.larghezza(),area.altezza());
     }
 }
